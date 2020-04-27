@@ -1,0 +1,1 @@
+print("Encoded string: {}".format(''.join((chr((ord(c) - (ord('a') if c.islower() else ord('A')) + 13) % 26 + (ord('a') if c.islower() else ord('A'))) if (ord(c) < 128 and c.isalpha()) else c) for c in input('Enter string to encode: '))))
