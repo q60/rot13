@@ -1,12 +1,9 @@
 /**
  * ROT13 encoder written in Vala.
  * Author: veleth <llathasa@outlook.com>
- * Version: 1.0
+ * Version: 1.0.0
  */
 public class Rot13 : GLib.Object {
-  /**
-   * This is an entrypoint of this program.
-   */
   private static int main () {
     stdout.printf ("Enter string to encode:\n");
     string? to_encode = stdin.read_line ();
