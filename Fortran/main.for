@@ -10,10 +10,8 @@ program ROT13
         
         if (ichar('A') <= c .and. c <= ichar('Z')) then
             c = mod(c - ichar('A') + 13, 26) + ichar('A')
-            str(i:i) = char(c)
         else if (ichar('a') <= c .and. c <= ichar('z')) then
             c = mod(c - ichar('a') + 13, 26) + ichar('a')
-            str(i:i) = char(c)
         end if
         
         str(i:i) = char(c)
