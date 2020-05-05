@@ -8,7 +8,7 @@ import (
 
 func main() {
   var encode, encoded string
-  fmt.Println("Enter string to encode: ")
+  fmt.Println("Enter string to encode:")
   scanner := bufio.NewScanner(os.Stdin)
   scanner.Scan()
   encode = scanner.Text()
@@ -20,6 +20,6 @@ func main() {
       }
     encoded += string(v)
   }
-  fmt.Println("Encoded string: ")
+  fmt.Println("Encoded string:")
   fmt.Println(encoded)
 }
