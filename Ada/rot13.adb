@@ -17,11 +17,11 @@ begin
     for I in 1 .. SU.Length (Str) loop
         Char := SU.Element (Str, I);
         if 'a' <= Char and Char <= 'z'  then
-            Tmp := (Character'Pos (Char) - Character'Pos ('a') + 13) mod 26 + Character'Pos('a');
+            Tmp := (Character'Pos (Char) - Character'Pos ('a') + 13) mod 26 + Character'Pos ('a');
             SU.Replace_Element (Str, I, Character'Val (Tmp));
         end if;
         if 'A' <= Char and Char <= 'Z'  then
-            Tmp := (Character'Pos (Char) - Character'Pos ('A') + 13) mod 26 + Character'Pos('A');
+            Tmp := (Character'Pos (Char) - Character'Pos ('A') + 13) mod 26 + Character'Pos ('A');
             SU.Replace_Element (Str, I, Character'Val (Tmp));
         end if;
     end loop;
