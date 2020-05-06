@@ -1,6 +1,6 @@
 # To run: 
 #   1. cd to directory with this CMakeLists.txt
-#   2. $ mkdir build && cmake -DENCODE=<String to encode> ..
+#   2. $ mkdir build && cd build && cmake -DENCODE=<String to encode> ..
 
 cmake_minimum_required(VERSION 3.13)
 project(ROT13 VERSION 1.0.0)
