@@ -26,7 +26,7 @@
         ((null? xs) null)
         ((null?
           (ch (car xs))) 
-         (cons (car xs) (rot (cdr xs))))
+          (cons (car xs) (rot (cdr xs))))
         (else 
           (cons
             (integer->char
@@ -38,5 +38,11 @@
             (rot (cdr xs))))))
     (list->string (rot (string->list xs))))
 
-(display (rot13 "Hello, World!"))
-(newline)
+(define (input-rot13)
+    (define (input xs)
+        (display "Encoded string:\n")
+        (display (rot13 xs))
+        (newline))
+    (display "Enter string to encode:\n")
+    (input (read-line)))
+(input-rot13)
