@@ -148,4 +148,4 @@
   
 
 
-finita​la​comedia
+finita la comedia
