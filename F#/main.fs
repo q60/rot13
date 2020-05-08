@@ -13,7 +13,6 @@ let rotateString toEncode : string =
       ) >> char
   )
   |> System.String
-  |> string
 
 [<EntryPoint>]
 let main argv : int =
