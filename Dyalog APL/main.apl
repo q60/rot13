@@ -5,28 +5,12 @@ BYTESVEC ← ⎕UCS TOENCODE
   'Encoded string:'
   ENCODED ← ''
   :For CHAR :In BYTESVEC
-    :If CHAR≥97
-      :If CHAR≤109
-        ENCODED ← ENCODED, CHAR+13
-      :Else
-        :If CHAR≥110
-          :If CHAR≤122
-            ENCODED ← ENCODED, CHAR-13
-          :EndIf
-        :EndIf
-      :EndIf
+    :If (CHAR≥97∧CHAR≤109)∨(CHAR≥65∧CHAR≤77)
+      ENCODED ← ENCODED, CHAR+13
+    :ElseIf (CHAR≥110∧CHAR≤122)∨(CHAR≥78∧CHAR≤90)
+      ENCODED ← ENCODED, CHAR-13
     :Else
-      :If CHAR≥65
-        :If CHAR≤77
-          ENCODED ← ENCODED, CHAR+13
-        :Else
-          :If CHAR≥78
-            :If CHAR≤90
-              ENCODED ← ENCODED, CHAR-13
-            :EndIf
-          :EndIf
-        :EndIf
-      :EndIf
+      ENCODED ← ENCODED, CHAR
     :EndIf
   :EndFor
   ENCODEDSTRING ← ⎕UCS ENCODED
