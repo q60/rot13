@@ -1,11 +1,11 @@
 ROT13 Challenge
 ===============
 
-This is a collection of **ROT13** encoding programms written in different languages. *Just for fun*.
+This is a collection of **ROT13** encoding programs written in different languages. *Just for fun*.
 
 Feel free to participate - *fork, add, pull request.*
 
-Your programm should have **I**/**O** and that's how it suppose to look:
+Your program should have **I**/**O** and that's how it's supposed to look (if possible):
 
 ```
 Enter string to encode:
@@ -14,4 +14,4 @@ Encoded string:
 ABJURER nowhere 123.
 ```
 
-The file have to be named `main.<lang_extension>` if possible. It must be placed in `<Language Name>` folder.
+The file has to be named `main.<lang_extension>` if possible. It must be placed in the `<Language Name>` folder.
