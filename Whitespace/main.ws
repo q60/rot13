@@ -146,6 +146,6 @@
    	 	 
 	
   
-
-
-finita la comedia
+finta
+la
+comedia
