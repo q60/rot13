@@ -1,8 +1,8 @@
 ⍝ This is a ROT13 encoding program in Dyalog APL
 ⍝ You can load this function using Dyalog interpreter entering this:
-⍝ ⎕SE.SALT.Load 'main.apl'
+⍝ ⎕SE.SALT.Load 'main.dyalog'
 ⍝ or this:
-⍝ ]load 'main.apl'
+⍝ ]load 'main.dyalog'
 ⍝ After this, the function will be loaded in environment and you will be able
 ⍝ to call it simply entering #.ROT13.ROTATE
 :Namespace ROT13
