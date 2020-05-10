@@ -1,6 +1,5 @@
 ROT13 Challenge
 ===============
-
 This is a collection of **ROT13** encoding programs written in different languages. *Just for fun*.
 
 Feel free to participate - *fork, add, pull request.*
