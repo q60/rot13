@@ -8,26 +8,26 @@ USING: kernel
        io ;
 IN: main
 
-: shift_letter ( base char -- encoded )
+: shift-letter ( base char -- encoded )
     [ - 13 + 26 mod ]
     [ + ]
     bi ;
 
-: check_letter ( char -- char )
+: check-letter ( char -- char )
     {
       { [ dup LETTER? ]
-          [ CHAR: A shift_letter ] }
+          [ CHAR: A shift-letter ] }
       { [ dup letter? ]
-          [ CHAR: a shift_letter ] }
+          [ CHAR: a shift-letter ] }
       [ ]
     } cond ;
 
-: encode_string ( string -- string )
-    [ check_letter ] map ;
+: encode-string ( string -- string )
+    [ check-letter ] map ;
 
 : encoder ( -- )
     "Enter string to encode:" print flush
-    readln encode_string
+    readln encode-string
     "Encoded string:" print
     print ;
 
