@@ -1,5 +1,12 @@
 ROT13 Challenge
 ===============
+- - -
+
+<p align="center">
+  <a href="https://gitter.im/veleth-stuff/rot13"><img alt="Gitter" src="https://img.shields.io/gitter/room/lalthasa-veleth/rot13?style=for-the-badge"></a>
+</p>
+
+- - -
 This is a collection of **ROT13** encoding programs written in different languages. *Just for fun*.
 
 Feel free to participate - *fork, add, pull request.*
