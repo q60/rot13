@@ -1,6 +1,8 @@
+[
 ! ATTENTION: To be able to run this code, interpreter has to be able to read newline characters (aka "\n") and it must support cell wrapping.
 ! Fortran-like comments are also available in my interpreter https://github.com/llathasa-veleth/brainfuck
 ! C-like comments - https://github.com/wtlgo/brainfuck
+]
 
 ++++[++++>---<]>++.-[--->+<]>++.++++++.+++[->+++<]>.+++++++++++++.[-->+++++<]>++
 +.---[->++++<]>-.+.--.---------.+++++.-------.-[--->+<]>--.---[->++++<]>.-----.[
