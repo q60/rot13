@@ -12,17 +12,17 @@ print:  push    rdx
         push    rdi
         push    rax
         call    len
-        mov     rdx, rax
+        mov     rdx, rax  ; size_t count
         pop     rax
-        mov     rsi, rax
-        mov     rdi, 1
-        mov     rax, 1
+        mov     rsi, rax  ; const char *buffer
+        mov     rdi, 1    ; stdout
+        mov     rax, 1    ; write syscall
         syscall
         pop     rdi
         pop     rsi
         pop     rdx
         ret
-exit:   mov     rdi, 0
-        mov     rax, 0h3C
+exit:   mov     rdi, 0    ; int exit_code
+        mov     rax, 0h3C ; exit syscall
         syscall
         ret
