@@ -11,7 +11,7 @@ msg2:      db       "Encoded string:",         0hA, 0
 _start:    mov      rax, msg1
            call     print
            mov      rax, 0h00       ; read syscall
-           mov      rdi, 0		      ; stdin
+           mov      rdi, 0          ; stdin
            mov      rsi, text       ; char *buffer
            mov      rdx, SIZE       ; size_t count
            syscall
