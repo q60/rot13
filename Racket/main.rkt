@@ -27,7 +27,7 @@
       (begin
         (define to-encode-list (string->list to-encode))
         (for-each
-          (lambda (byte) (rotate byte))
+          (λ (byte) (rotate byte))
           to-encode-list)
         (newline)))
     (encode-rot13 to-encode)))
