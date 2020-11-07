@@ -1,0 +1,2 @@
+ch = lambda c: (i:=c.upper(),chr(int(ord(c)+(-13*((ord(i)-77.5)/abs(ord(i)-77.5)))))) if 65 <= ord(c.upper()) <= 90 else c
+print("Encoded string:\n"+''.join([ch(c)[-1] for c in input("Enter string to encode:\n")]))
