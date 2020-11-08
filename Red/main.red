@@ -3,12 +3,8 @@ Red [
 ]
 
 rotate: function [str][
-  xs: parse str [collect
-    [some
-      [keep skip]]]
-  ys: parse (uppercase str) [collect
-    [some
-      [keep skip]]]
+  xs: collect [foreach c str [keep c]]
+  ys: collect [foreach c (uppercase str) [keep c]]
   zs: ""
   i: 0
   foreach c xs [

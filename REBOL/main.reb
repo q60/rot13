@@ -3,7 +3,7 @@ REBOL [
 ]
 
 rotate: func [str][
-  xs: collect [foreach c str  [keep c]]
+  xs: collect [foreach c str [keep c]]
   ys: collect [foreach c (uppercase str) [keep c]]
   zs: ""
   i: 0
