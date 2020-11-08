@@ -1,5 +1,5 @@
 Red [
-  title: "rot13"
+  Title: "rot13"
 ]
 
 rotate: func [str][
