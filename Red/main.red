@@ -2,7 +2,7 @@ Red [
   title: "rot13"
 ]
 
-rotate: function [str][
+rotate: func [str][
   xs: collect [foreach c str [keep c]]
   ys: collect [foreach c (uppercase str) [keep c]]
   zs: ""
