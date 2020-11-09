@@ -11,13 +11,11 @@ defmodule Rot13 do
             |> String.to_charlist()
             |> Enum.at(0)
           if 65 <= x and x <= 90 do
-            c = <<
-                  c + (-13 * trunc(abs(x - 77.5)/(x - 77.5))) :: utf8
-                >>
-            c
+            <<
+              c + (-13 * trunc(abs(x - 77.5)/(x - 77.5))) :: utf8
+            >>
           else
-            c = << c :: utf8 >>
-            c
+            << c :: utf8 >>
           end
         end)
   end
