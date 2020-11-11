@@ -19,7 +19,7 @@ defmodule Rot13 do
             |> String.upcase()
             |> String.to_charlist()
             |> Enum.at(0)
-          if 65 <= char_up and char_up <= 90 do
+          if ?A <= char_up and char_up <= ?Z do
             <<
               char + (-13 * trunc(sign(char_up - 77.5))) :: utf8
             >>
