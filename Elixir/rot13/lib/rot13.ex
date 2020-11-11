@@ -1,33 +1,43 @@
 defmodule Rot13 do
-  @spec start(any, any) :: {:ok, pid}
-  @spec rotate(any) :: any
+  @moduledoc """
+  Rot13.
+  """
 
-  def rotate(xs) do
-    xs
+  @spec sign(integer | float) :: -1 | 1
+  def sign(int) do
+    if int >= 0 do 1
+    else          -1
+    end
+  end
+
+  @spec rotate(charlist) :: charlist
+  def rotate(string_chars) do
+    string_chars
       |> Enum.map(
-        fn c ->
-          x = << c :: utf8 >>
+        fn char ->
+          char_up = << char :: utf8 >>
             |> String.upcase()
             |> String.to_charlist()
             |> Enum.at(0)
-          if 65 <= x and x <= 90 do
+          if 65 <= char_up and char_up <= 90 do
             <<
-              c + (-13 * trunc(abs(x - 77.5)/(x - 77.5))) :: utf8
+              char + (-13 * trunc(sign(char_up - 77.5))) :: utf8
             >>
           else
-            << c :: utf8 >>
+            << char :: utf8 >>
           end
         end)
   end
 
+  @spec start(any, any) :: {:ok, pid}
   def start(_type, _args) do
     IO.puts("Enter string to encode:")
     IO.puts(
       [
         "Encoded string:\n",
-        IO.read(:stdio, :line)
+        IO.read(:line)
+          |> String.trim()
           |> String.to_charlist()
-          |> List.delete_at(-1)
           |> rotate()
       ]
     )
