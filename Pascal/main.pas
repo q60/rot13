@@ -5,12 +5,12 @@ var
 
 function ROT13(c: char): char;
 begin
-    if c in ['A'..'Z'] then
-    	ROT13 := chr((ord(c) - ord('A') + 13) mod 26 + ord('A'))
-    else if c in ['a'..'z'] then
-    	ROT13 := chr((ord(c) - ord('a') + 13) mod 26 + ord('a'))
-    else
-    	ROT13 := c;
+  if c in ['A'..'Z'] then
+    ROT13 := chr((ord(c) - ord('A') + 13) mod 26 + ord('A'))
+  else if c in ['a'..'z'] then
+    ROT13 := chr((ord(c) - ord('a') + 13) mod 26 + ord('a'))
+  else
+    ROT13 := c;
 end;
 
 begin
