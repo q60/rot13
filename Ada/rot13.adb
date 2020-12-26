@@ -1,5 +1,5 @@
-with Ada.Text_IO;     
-with Ada.Strings.Unbounded;  
+with Ada.Text_IO;
+with Ada.Strings.Unbounded;
 with Ada.Text_IO.Unbounded_IO;
 
 procedure ROT13 is
@@ -13,7 +13,7 @@ procedure ROT13 is
 begin
     IO.Put ("Enter string to encode: ");
     Str := TU.Get_Line;
-    
+
     for I in 1 .. SU.Length (Str) loop
         Char := SU.Element (Str, I);
         if 'a' <= Char and Char <= 'z'  then
@@ -25,7 +25,7 @@ begin
             SU.Replace_Element (Str, I, Character'Val (Tmp));
         end if;
     end loop;
-    
+
     IO.Put ("Encoded string: ");
     TU.Put_Line (Str);
 end ROT13;
