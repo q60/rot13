@@ -1,4 +1,4 @@
-len:    push    rdi
+   len: push    rdi
         mov     rdi, rax
 nextch: cmp     byte [rax], 0
         jz      finish
@@ -7,7 +7,7 @@ nextch: cmp     byte [rax], 0
 finish: sub     rax, rdi
         pop     rdi
         ret
-print:  push    rdx
+ print: push    rdx
         push    rsi
         push    rdi
         push    rax
@@ -22,7 +22,7 @@ print:  push    rdx
         pop     rsi
         pop     rdx
         ret
-exit:   mov     rdi, 0    ; int exit_code
+  exit: mov     rdi, 0    ; int exit_code
         mov     rax, 0h3C ; exit syscall
         syscall
         ret
