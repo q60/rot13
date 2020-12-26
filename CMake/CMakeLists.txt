@@ -1,4 +1,4 @@
-# To run: 
+# To run:
 #   1. cd to directory with this CMakeLists.txt
 #   2. $ mkdir build && cd build && cmake -DENCODE=<String to encode> ..
 
