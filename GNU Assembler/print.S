@@ -7,7 +7,7 @@ nextch: cmpb    $0,  (%rax)
 finish: sub     %rdi, %rax
         pop     %rdi
         ret
-print:  push    %rdx
+ print: push    %rdx
         push    %rsi
         push    %rdi
         push    %rax
@@ -22,7 +22,7 @@ print:  push    %rdx
         pop     %rsi
         pop     %rdx
         ret
-exit:   mov     $0,    %rdi # int exit_code
+  exit: mov     $0,    %rdi # int exit_code
         mov     $0x3C, %rax # exit syscall
         syscall
         ret
