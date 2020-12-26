@@ -9,7 +9,7 @@ for i = 1, s:len() do
     elseif string.byte('A') <= c and c <= string.byte('Z') then
         c = (c - string.byte('A') + 13) % 26 + string.byte('A')
     end
-    
+
     res = res .. string.char(c)
 end
 
