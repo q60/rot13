@@ -4,7 +4,7 @@ Public Class ROT13
     Public Shared Sub Main()
         Console.Write("Enter string to encode: ")
         Dim str As String = Console.ReadLine()
-        
+
         Console.Write("Encoded string: ")
         Dim c As Char
         For Each c in str
@@ -19,6 +19,6 @@ Public Class ROT13
             End If
         Next
         Console.WriteLine()
-        
+
     End Sub
 End Class
