@@ -16,10 +16,10 @@ end;
 begin
 	write('Enter string to encode: ');
 	read(input);
-	
+
 	write('Encoded string: ');
 	for i := 1 to length(input) do
 		write(ROT13(input[i]));
-	
+
 	writeln;
 end.
