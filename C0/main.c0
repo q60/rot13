@@ -2,27 +2,27 @@
 #use <string>
 
 int main() {
-    print("Enter string to encode: ");
+  print("Enter string to encode: ");
 
-    string in = readline();
-    char[] ccin = string_to_chararray(in);
+  string in = readline();
+  char[] ccin = string_to_chararray(in);
 
-    for(int i = 0; i < string_length(in); i++) {
-        int to_rot = 0;
-        if('a' <= ccin[i] && ccin[i] <= 'z')
-            to_rot = char_ord('a');
-        else if('A' <= ccin[i] && ccin[i] <= 'Z')
-            to_rot = char_ord('A');
+  for(int i = 0; i < string_length(in); i++) {
+    int to_rot = 0;
+    if('a' <= ccin[i] && ccin[i] <= 'z')
+      to_rot = char_ord('a');
+    else if('A' <= ccin[i] && ccin[i] <= 'Z')
+      to_rot = char_ord('A');
 
-        if(to_rot != 0)
-            ccin[i] = char_chr((char_ord(ccin[i]) - to_rot + 13) % 26 + to_rot);
-    }
+    if(to_rot != 0)
+      ccin[i] = char_chr((char_ord(ccin[i]) - to_rot + 13) % 26 + to_rot);
+  }
 
-    in = string_from_chararray(ccin);
+  in = string_from_chararray(ccin);
 
-    print("Encoded string: ");
-    print(in);
-    printchar('\n');
+  print("Encoded string: ");
+  print(in);
+  printchar('\n');
 
-    return 0;
+  return 0;
 }
