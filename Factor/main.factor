@@ -1,34 +1,23 @@
-! This a simple ROT13 encoder script.
 USING: kernel
-       math
-       sequences
-       combinators
+       io
        ascii
-       strings
-       io ;
+       math
+       math.order
+       sequences
+       combinators.short-circuit ;
 IN: main
 
-: shift-letter ( base char -- encoded )
-    [ - 13 + 26 mod ]
-    [ + ]
-    bi ;
+: rot13 ( str -- rot13 )
+  [ dup ch>upper dup
+    { [ ascii? ] [ Letter? ] } 1&&
+      [ 65 77 between?
+        [ 13 + ] [ 13 - ] if ]
+      [ drop ] if ] map ;
 
-: check-letter ( char -- char )
-    {
-      { [ dup LETTER? ]
-          [ CHAR: A shift-letter ] }
-      { [ dup letter? ]
-          [ CHAR: a shift-letter ] }
-      [ ]
-    } cond ;
+: main ( -- )
+  "Enter string to encode:" print flush
+  readln
+  "Encoded string:" print
+  rot13 print ;
 
-: encode-string ( string -- string )
-    [ check-letter ] map ;
-
-: encoder ( -- )
-    "Enter string to encode:" print flush
-    readln encode-string
-    "Encoded string:" print
-    print ;
-
-MAIN: encoder
+MAIN: main
