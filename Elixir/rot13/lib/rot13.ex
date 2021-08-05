@@ -1,8 +1,8 @@
 defmodule Rot13 do
   def rotate({k, v}) do
-	  cond do
-	    v in ?A..?M ->
-		    k + 13
+    cond do
+      v in ?A..?M ->
+        k + 13
       v in ?N..?Z ->
         k - 13
       true ->
@@ -11,7 +11,7 @@ defmodule Rot13 do
   end
 
   def main(_) do
-	  encoded = IO.gets("Enter string to encode:\n")
+    encoded = IO.gets("Enter string to encode:\n")
     |> String.trim()
     |> then(
     fn xs ->
