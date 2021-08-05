@@ -5,16 +5,18 @@ defmodule Rot13.MixProject do
     [
       app: :rot13,
       version: "0.1.0",
-      elixir: "~> 1.11",
+      elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      escript: [
+        main_module: Rot13
+      ]
     ]
   end
 
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      mod: {Rot13, []},
       extra_applications: [:logger]
     ]
   end
