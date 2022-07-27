@@ -1,31 +1,17 @@
-(println "Enter string to encode:")
-(def to-encode
-  (map int
-    (seq (read-line))))
+#!/usr/bin/env boot
+(require '[clojure.string :as string])
 
-(println "Encoded string:")
-(doseq [letter to-encode]
-  (cond
-    (or
-      (and
-        (>= letter 65)
-        (<= letter 77))
-      (and
-        (>= letter 97)
-        (<= letter 109)))
-    (print
-      (char
-        (+ letter 13)))
-    (or
-      (and
-        (>= letter 78)
-        (<= letter 90))
-      (and
-        (>= letter 110)
-        (<= letter 122)))
-    (print
-      (char
-        (- letter 13)))
-    :else
-      (print
-        (char letter))))
+(defn rotate [[k v]]
+  (cond (<= 65 v 77) (+ k 13)
+        (<= 78 v 90) (- k 13)
+        :else k))
+
+(defn -main [& _]
+  (println "Enter string to encode:")
+  (let [to-encode (read-line)
+        zipped (map #(vector (int %1) (int %2))
+                    to-encode
+                    (string/upper-case to-encode))]
+    (printf "Encoded string:\n%s\n"
+            (apply str (map char
+                            (map rotate zipped))))))
