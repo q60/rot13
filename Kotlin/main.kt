@@ -1,5 +1,5 @@
 fun main() {
-    print("Enter string to encode: ")
+    println("Enter string to encode:")
     val line = readLine() ?: ""
     val encoded =
         line.map {
@@ -9,5 +9,5 @@ fun main() {
                 else -> it
             }
         }.joinToString("")
-    println("Encoded string: $encoded")
+    println("Encoded string:\n$encoded")
 }
