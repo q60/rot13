@@ -1,19 +1,9 @@
-using System;
-using System.Linq;
-
-public class Rot13
-{
-  public static void Main()
-  {
-    Console.Write("Enter string to encode: ");
-    Console.Write(String.Format("Encoded string: {0}\n",
-      new String(
-        Console.ReadLine().ToCharArray().Select(c => {
-          if('a' <= c && c <= 'z') c = (char)((c - 'a' + 13) % 26 + 'a');
-          else if('A' <= c && c <= 'Z') c = (char)((c - 'A' + 13) % 26 + 'A');
-          return c;
-        }).ToArray()
-      )
-    ));
-  }
-}
+if (args?.Count() > 0)
+    Console.WriteLine(args[0].Select(c =>
+            c switch
+            {
+                >= 'a' and <= 'm' or >= 'A' and <= 'M' => (char)(c + 13),
+                >= 'n' and <= 'z' or >= 'N' and <= 'Z' => (char)(c - 13),
+                _ => c
+            }
+        ).ToArray());
