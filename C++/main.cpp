@@ -1,5 +1,7 @@
 #include <iostream>
+#include <string>
 #include <iterator>
+#include <algorithm>
 
 int main() {
   std::cout << "Enter string to encode: ";
