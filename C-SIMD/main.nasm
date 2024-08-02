@@ -1,32 +1,30 @@
 	[global _start]
 
-	buffer_len equ 65535  ; so that it fits in 16 bits
-
 	[section .text align=1]
 
 _start:
-	lea ebp, [rel data]
+	lea ebp, [rel buffer]
 
 	inc eax  ; SYS_write = 1
 	inc edi
-	lea esi, [rbp + input_prompt - data]
+	lea esi, [rbp + input_prompt - buffer]
 	mov dl, input_prompt_len
 	syscall
 
-	vpbroadcastb ymm0, [rbp + lit_0x0d - data]
-	vpbroadcastb ymm2, [rbp + lit_0xdf - data]
-	vpbroadcastb ymm3, [rbp + lit_0xc1 - data]
-	vpbroadcastb ymm5, [rbp + lit_0x9a - data]
-	vpbroadcastb ymm6, [rbp + lit_0x4e - data]
+	vpbroadcastb ymm0, [rbp + lit_0x0d - buffer]
+	vpbroadcastb ymm2, [rbp + lit_0xdf - buffer]
+	vpbroadcastb ymm3, [rbp + lit_0xc1 - buffer]
+	vpbroadcastb ymm5, [rbp + lit_0x9a - buffer]
+	vpbroadcastb ymm6, [rbp + lit_0x4e - buffer]
 	vpsubb ymm7, ymm0
 
 	xor eax, eax  ; SYS_read = 0
 	xor edi, edi
 	mov esi, ebp
-	mov dx, buffer_len
+	not dx
 	syscall
 
-	push rax
+	lea edx, [rax + output_prompt_len]
 
 loop:
 	vpand ymm1, ymm2, [rsi]
@@ -42,15 +40,8 @@ loop:
 	jnb loop
 
 	inc edi
-	mov eax, edi
-	lea esi, [rbp + output_prompt - data]
-	push output_prompt_len
-	pop rdx
-	syscall
-
 	mov eax, edi  ; SYS_write = 1
-	mov esi, ebp
-	pop rdx
+	lea esi, [rbp + output_prompt - buffer]
 	syscall
 
 exit:
@@ -62,9 +53,6 @@ exit:
 input_prompt:
 	db "Enter string to encode:", 0x0a
 	input_prompt_len equ $ - input_prompt
-output_prompt:
-	db "Encoded string:", 0x0a
-	output_prompt_len equ $ - output_prompt
 
 lit_0x0d:
 	db 0x0d
@@ -77,10 +65,11 @@ lit_0x9a:
 lit_0x4e:
 	db 0x4e
 
-	; aligns to buffer
-	data equ $ + 23
+output_prompt:
+	db "Encoded string:", 0x0a
+	output_prompt_len equ $ - output_prompt
+
+buffer:
 
 	[section .bss]
-	align 0x20
-buffer:
-	resb buffer_len
+	resb 65535
