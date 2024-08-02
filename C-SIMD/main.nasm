@@ -1,6 +1,40 @@
-	[global _start]
+	[bits 64]
 
-	[section .text align=1]
+	org 0x400000
+
+elf_header:
+	; ELF header
+	db 0x7f, "ELF"
+	db 1  ; class: 32-bit
+	db 1  ; endianness: little
+	db 1  ; version: 1
+	db 0  ; OS ABI: SysV
+	db 0  ; ABI version: ignored
+	db 0, 0, 0, 0, 0, 0, 0  ; padding: ignored
+	dw 2  ; type: EXEC
+	dw 0x3e  ; ISA: x86-64
+	dd 1  ; version: 1
+	dd _start  ; entry point
+	dd program_header - elf_header  ; program header table offset
+	dd 0  ; section header table offset
+	dd 0  ; flags
+	dw 52  ; ELF header size
+	dw _start - program_header  ; program header entry size
+	dw 1  ; program header entry count
+	dw 0  ; section header entry size
+	dw 0  ; section header entry count
+	dw 0  ; section name entry index
+
+program_header:
+	; Program header
+	dd 1  ; type: PT_LOAD
+	dd 0  ; file offset: 0
+	dd elf_header ; virtual address
+	dd 0  ; physical address: 0
+	dd buffer - elf_header ; file size
+	dd end - elf_header  ; size in memory
+	dd 0x7  ; flags: rwx
+	dd 0  ; alignment: none
 
 _start:
 	lea ebp, [rel buffer]
@@ -65,11 +99,12 @@ lit_0x9a:
 lit_0x4e:
 	db 0x4e
 
+	; padding
+	times 4 db 0
+
 output_prompt:
 	db "Encoded string:", 0x0a
 	output_prompt_len equ $ - output_prompt
 
 buffer:
-
-	[section .bss]
-	resb 65535
+	end equ buffer + 65535
