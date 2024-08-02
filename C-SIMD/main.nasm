@@ -10,7 +10,7 @@ elf_header:
 
 _start:
 	; Exactly 9 bytes. Overlaps with: OS ABI (u8), ABI version (u8), padding ([u8; 7])
-	mov ebp, ebp_base
+	mov ebx, ebx_base
 	inc eax  ; SYS_write = 1
 	jmp stage2
 
@@ -21,28 +21,25 @@ _start:
 	dd program_header - elf_header  ; program header table offset
 
 stage2:
-	; Exactly 9 bytes. Overlaps with:
+	; Exactly 10 bytes. Overlaps with:
 	; - section header table offset (u32): ignored
 	; - flags (u32): ignored
-	; - ELF header size (u16, overlaps only partially): always has to be 0x34, we get lucky with
-	;   jump offset
-	inc edi
-	lea esi, [rbp + input_prompt - ebp_base]
-	mov dl, input_prompt_len
-	jmp stage3  ; This jump's offset is exactly 0x34
+	; - ELF header size (u16): ignored
+	vpbroadcastb ymm0, [rbx]
+	lea esi, [rbx + input_prompt - ebx_base]
+	jmp stage3
 
-	db 0  ; Continuation of ELF header size
 	dw program_header_end - program_header  ; program header entry size
 program_header:
 	dd 1  ; In ELF header: program header entry count (u16): 1, section header entry size (u16): 0
-	      ; In program header: type: PT_LOAD
+		  ; In program header: type: PT_LOAD
 	dd 0  ; In ELF header: section header entry count (u16): 0, section name entry index (u16): 0
-	      ; In program header: file offset: 0
+		  ; In program header: file offset: 0
 elf_header_end:
 	dd elf_header ; virtual address
 
 	; Overlap with physical address (u32)
-ebp_base:
+ebx_base:
 lit_0x0d:
 	db 0x0d
 lit_0xc1:
@@ -62,13 +59,14 @@ program_header_end:
 	input_prompt_len equ $ - input_prompt
 
 stage3:
+	inc edi
+	mov dl, input_prompt_len
 	syscall
 
-	vpbroadcastb ymm0, [rbp + lit_0x0d - ebp_base]
-	vpbroadcastb ymm2, [rbp + lit_0xdf - ebp_base]
-	vpbroadcastb ymm3, [rbp + lit_0xc1 - ebp_base]
-	vpbroadcastb ymm5, [rbp + lit_0x9a - ebp_base]
-	vpbroadcastb ymm6, [rbp + lit_0x4e - ebp_base]
+	vpbroadcastb ymm2, [rbx + lit_0xdf - ebx_base]
+	vpbroadcastb ymm3, [rbx + lit_0xc1 - ebx_base]
+	vpbroadcastb ymm5, [rbx + lit_0x9a - ebx_base]
+	vpbroadcastb ymm6, [rbx + lit_0x4e - ebx_base]
 	vpsubb ymm7, ymm0
 
 	xor eax, eax  ; SYS_read = 0
@@ -104,7 +102,7 @@ loop:
 	syscall
 
 	; padding
-	times 2 db 0
+	times 4 db 0
 
 output_prompt:
 	db "Encoded string:", 0x0a
