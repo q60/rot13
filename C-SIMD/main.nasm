@@ -17,7 +17,7 @@ elf_header:
 	; - version (u64)
 _start:
 	mov ebx, ebx_base
-	vpbroadcastb ymm3, [rbx + lit_0xc1 - ebx_base]
+	vpbroadcastb ymm0, [rbx + lit_0x0d - ebx_base]
 	mov ecx, 0x003e0002  ; imm32: type, ISA
 	inc eax  ; SYS_write = 1
 	jmp stage2
@@ -30,8 +30,8 @@ stage2:
 	; - section header table offset (u32): ignored
 	; - flags (u32): ignored
 	; - ELF header size (u16): ignored
-	vpbroadcastb ymm2, [rbx + lit_0xdf - ebx_base]
-	inc edi
+	vpbroadcastb ymm2, [rbx]
+	lea esi, [rbx + input_prompt - ebx_base]
 	jmp stage3
 
 	dw program_header_end - program_header  ; program header entry size
@@ -44,7 +44,6 @@ elf_header_end:
 	dd elf_header ; virtual address
 
 	; Overlap with physical address (u32)
-ebx_base:
 lit_0x0d:
 	db 0x0d
 lit_0xc1:
@@ -56,19 +55,19 @@ lit_0x4e:
 
 	dd buffer - elf_header ; file size
 	dd end - elf_header  ; size in memory: can be clobbered maybe
-	db 0x7  ; flags: rwx
-input_prompt:
-	db "Enter s"  ; continuation of flags (u32-u8): ignored, alignment (u32): ignored
-program_header_end:
-	db "tring to encode:", 0x0a
-	input_prompt_len equ $ - input_prompt
 
 stage3:
-	lea esi, [rbx + input_prompt - ebx_base]
+	; Exactly 8 bytes. Overlaps with:
+	; - flags (u32): rwx, i.e. & 0x7 == 0x7
+	; - alignment (u32): ignored
+	inc edi
+	vpbroadcastb ymm3, [rbx + lit_0xc1 - ebx_base]
+program_header_end:
+
+	; Free code
 	mov dl, input_prompt_len
 	syscall
 
-	vpbroadcastb ymm0, [rbx]
 	vpbroadcastb ymm5, [rbx + lit_0x9a - ebx_base]
 	vpbroadcastb ymm6, [rbx + lit_0x4e - ebx_base]
 	vpsubb ymm7, ymm0
@@ -88,6 +87,7 @@ loop:
 	vpsubb ymm1, ymm6
 	vpblendvb ymm1, ymm7, ymm0, ymm1
 	lit_0xdf equ $ + 2  ; aren't we lucky?
+	ebx_base equ lit_0xdf
 	vpandn ymm4, ymm1
 	vpaddb ymm4, [rsi]
 	vmovdqa [rsi], ymm4
@@ -97,7 +97,7 @@ loop:
 
 	inc edi
 	mov eax, edi  ; SYS_write = 1
-	mov esi, output_prompt
+	lea esi, [rbx + output_prompt - ebx_base]
 	syscall
 
 	push 60  ; SYS_exit = 60
@@ -105,8 +105,12 @@ loop:
 	xor edi, edi
 	syscall
 
+input_prompt:
+	db "Enter string to encode:", 0x0a
+	input_prompt_len equ $ - input_prompt
+
 	; padding
-	times 10 db 0
+	times 13 db 0
 
 output_prompt:
 	db "Encoded string:", 0x0a
