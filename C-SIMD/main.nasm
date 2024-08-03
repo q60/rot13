@@ -54,9 +54,11 @@ lit_0x4e:
 	db 0x4e
 
 	dd buffer - elf_header ; file size
-	dd end - elf_header  ; size in memory: can be clobbered maybe
 
 stage3:
+	; Exactly 4 bytes. Overlays with size in memory: should just be large enough
+	vpsubb ymm7, ymm0
+
 	; Exactly 8 bytes. Overlaps with:
 	; - flags (u32): rwx, i.e. & 0x7 == 0x7
 	; - alignment (u32): ignored
@@ -70,7 +72,6 @@ program_header_end:
 
 	vpbroadcastb ymm5, [rbx + lit_0x9a - ebx_base]
 	vpbroadcastb ymm6, [rbx + lit_0x4e - ebx_base]
-	vpsubb ymm7, ymm0
 
 	xor eax, eax  ; SYS_read = 0
 	xor edi, edi
@@ -110,11 +111,10 @@ input_prompt:
 	input_prompt_len equ $ - input_prompt
 
 	; padding
-	times 13 db 0
+	times 17 db 0
 
 output_prompt:
 	db "Encoded string:", 0x0a
 	output_prompt_len equ $ - output_prompt
 
 buffer:
-	end equ buffer + 65535
