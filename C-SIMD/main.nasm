@@ -17,7 +17,7 @@ elf_header:
 	; - version (u64)
 _start:
 	mov ebx, ebx_base
-	vpbroadcastb ymm0, [rbx + lit_0x0d - ebx_base]
+	vpbroadcastb ymm1, [rbx + lit_0x32 - ebx_base]
 	mov ecx, 0x003e0002  ; imm32: type, ISA
 	inc eax  ; SYS_write = 1
 	jmp stage2
@@ -30,7 +30,7 @@ stage2:
 	; - section header table offset (u32): ignored
 	; - flags (u32): ignored
 	; - ELF header size (u16): ignored
-	vpbroadcastb ymm2, [rbx]
+	vpbroadcastb ymm0, [rbx]
 	lea esi, [rbx + input_prompt - ebx_base]
 	jmp stage3
 
@@ -44,34 +44,31 @@ elf_header_end:
 	dd elf_header ; virtual address
 
 	; Overlap with physical address (u32)
+lit_0x32:
+	db 0x32
 lit_0x0d:
 	db 0x0d
 lit_0xc1:
 	db 0xc1
-lit_0x9a:
-	db 0x9a
-lit_0x4e:
-	db 0x4e
+lit_0x99:
+	db 0x99
 
 	dd buffer - elf_header ; file size
 
 stage3:
-	; Exactly 4 bytes. Overlays with size in memory: should just be large enough
-	vpsubb ymm7, ymm0
-
-	; Exactly 8 bytes. Overlaps with:
+	; Exactly 12 bytes. Overlays with
+	; - size in memory (u32): should just be large enough
 	; - flags (u32): rwx, i.e. & 0x7 == 0x7
 	; - alignment (u32): ignored
+	mov dl, input_prompt_len
 	inc edi
-	vpbroadcastb ymm3, [rbx + lit_0xc1 - ebx_base]
+	syscall
+	vpbroadcastb ymm2, [rbx + lit_0x0d - ebx_base]
 program_header_end:
 
 	; Free code
-	mov dl, input_prompt_len
-	syscall
-
-	vpbroadcastb ymm5, [rbx + lit_0x9a - ebx_base]
-	vpbroadcastb ymm6, [rbx + lit_0x4e - ebx_base]
+	vpbroadcastb ymm3, [rbx + lit_0xc1 - ebx_base]
+	vpbroadcastb ymm4, [rbx + lit_0x99 - ebx_base]
 
 	xor eax, eax  ; SYS_read = 0
 	xor edi, edi
@@ -82,16 +79,16 @@ program_header_end:
 	lea edx, [rax + output_prompt_len]
 
 loop:
-	vpand ymm1, ymm2, [rsi]
-	vpsubb ymm4, ymm1, ymm3
-	vpcmpgtb ymm4, ymm5
-	vpsubb ymm1, ymm6
-	vpblendvb ymm1, ymm7, ymm0, ymm1
+	vpand ymm7, ymm0, [rsi]
+	vpaddb ymm6, ymm7, ymm1
+	vpsignb ymm6, ymm2, ymm6
+	vpsubb ymm5, ymm7, ymm3
+	vpcmpgtb ymm5, ymm5, ymm4
 	lit_0xdf equ $ + 2  ; aren't we lucky?
 	ebx_base equ lit_0xdf
-	vpandn ymm4, ymm1
-	vpaddb ymm4, [rsi]
-	vmovdqa [rsi], ymm4
+	vpandn ymm6, ymm5, ymm6
+	vpaddb ymm6, [rsi]
+	vmovdqa [rsi], ymm6
 	add esi, 0x20
 	sub eax, 0x20
 	jnb loop
@@ -111,7 +108,7 @@ input_prompt:
 	input_prompt_len equ $ - input_prompt
 
 	; padding
-	times 17 db 0
+	times 22 db 0
 
 output_prompt:
 	db "Encoded string:", 0x0a
