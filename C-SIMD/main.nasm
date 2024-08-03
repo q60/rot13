@@ -17,7 +17,7 @@ elf_header:
 	; - version (u64)
 _start:
 	mov ebx, ebx_base
-	vpbroadcastb ymm1, [rbx + lit_0x32 - ebx_base]
+	vpbroadcastb ymm4, [rbx + lit_0x99 - ebx_base]
 	mov ecx, 0x003e0002  ; imm32: type, ISA
 	inc eax  ; SYS_write = 1
 	jmp stage2
@@ -44,14 +44,12 @@ elf_header_end:
 	dd elf_header ; virtual address
 
 	; Overlap with physical address (u32)
-lit_0x32:
-	db 0x32
-lit_0x0d:
-	db 0x0d
-lit_0xc1:
-	db 0xc1
 lit_0x99:
 	db 0x99
+lit_0x0d:
+	db 0x0d
+	nop
+	nop
 
 	dd buffer - elf_header ; file size
 
@@ -67,12 +65,11 @@ stage3:
 program_header_end:
 
 	; Free code
-	vpbroadcastb ymm3, [rbx + lit_0xc1 - ebx_base]
-	vpbroadcastb ymm4, [rbx + lit_0x99 - ebx_base]
+	vpaddb ymm1, ymm4, ymm4
 
 	xor eax, eax  ; SYS_read = 0
 	xor edi, edi
-	mov esi, buffer
+	lea esi, [rbx + buffer - ebx_base]
 	not dx
 	syscall
 
@@ -81,8 +78,8 @@ program_header_end:
 loop:
 	vpand ymm7, ymm0, [rsi]
 	vpaddb ymm6, ymm7, ymm1
+	vpaddb ymm5, ymm6, ymm2
 	vpsignb ymm6, ymm2, ymm6
-	vpsubb ymm5, ymm7, ymm3
 	vpcmpgtb ymm5, ymm5, ymm4
 	lit_0xdf equ $ + 2  ; aren't we lucky?
 	ebx_base equ lit_0xdf
@@ -106,9 +103,6 @@ loop:
 input_prompt:
 	db "Enter string to encode:", 0x0a
 	input_prompt_len equ $ - input_prompt
-
-	; padding
-	times 22 db 0
 
 output_prompt:
 	db "Encoded string:", 0x0a
