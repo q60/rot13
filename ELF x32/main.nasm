@@ -16,10 +16,10 @@ elf_header:
 	; - ISA (u16): x86-64, part of mov imm32
 	; - version (u64)
 _start:
-	mov ebx, ebx_base
-	vpbroadcastb ymm4, [rbx + lit_0x99 - ebx_base]
+	mov ebx, ebx_base  ; 5 bytes
+	vpbroadcastb ymm2, [rbx + lit_0x0d - ebx_base]  ; 6 bytes
 	mov ecx, 0x003e0002  ; imm32: type, ISA
-	inc eax  ; SYS_write = 1
+	inc edi  ; 2 bytes
 	jmp stage2
 
 	dd _start  ; entry point
@@ -30,11 +30,11 @@ stage2:
 	; - section header table offset (u32): ignored
 	; - flags (u32): ignored
 	; - ELF header size (u16): ignored
-	vpbroadcastb ymm0, [rbx]
-	lea esi, [rbx + input_prompt - ebx_base]
+	mov dl, input_prompt_len  ; 2 bytes
+	vpbroadcastb ymm4, [rbx + lit_0x99 - ebx_base]  ; 6 bytes
 	jmp stage3
 
-	dw program_header_end - program_header  ; program header entry size
+	dw 0x20  ; program header entry size
 program_header:
 	dd 1  ; In ELF header: program header entry count (u16): 1, section header entry size (u16): 0
 		  ; In program header: type: PT_LOAD
@@ -52,19 +52,18 @@ stage3:
 	; - size in memory (u32): should just be large enough
 	; - flags (u32): rwx, i.e. & 0x7 == 0x7
 	; - alignment (u32): ignored
-	mov dl, input_prompt_len
-	inc edi
-	db 0x66, 0x05, 0x00, 0x00  ; file size: add ax, 0 (imm16)
-	vpaddb ymm1, ymm4, ymm4
-	syscall
-	vpbroadcastb ymm2, [rbx + lit_0x0d - ebx_base]
-program_header_end:
-
-	; Free code
+	vpaddb ymm1, ymm4, ymm4  ; 4 bytes
+	db 0x05, 0x01, 0x00, 0x00  ; file size: add eax, 1 (imm32), as SYS_write = 1
+	db 0x00
+	lea esi, [rbx + input_prompt - ebx_base]  ; 3 bytes
+	syscall  ; the first byte is 0xf, which has rwx bits set
 	xor eax, eax  ; SYS_read = 0
 	xor edi, edi
-	lea esi, [rbx + buffer - ebx_base]
 	not dx
+
+	; Free code
+	vpbroadcastb ymm0, [rbx]  ; 5 bytes
+	lea esi, [rbx + buffer - ebx_base]
 	syscall
 
 	lea edx, [rax + output_prompt_len]
@@ -95,7 +94,7 @@ loop:
 	syscall
 
 	; padding
-	times 4 db 0
+	times 5 db 0
 
 input_prompt:
 	db "Enter string to encode:", 0x0a
