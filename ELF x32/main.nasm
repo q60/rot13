@@ -1,6 +1,6 @@
 	[bits 64]
 
-	org 0x400000
+	org 0x0d990000
 
 elf_header:
 	db 0x7f, "ELF"
@@ -41,32 +41,26 @@ program_header:
 	dd 0  ; In ELF header: section header entry count (u16): 0, section name entry index (u16): 0
 		  ; In program header: file offset: 0
 elf_header_end:
+	lit_0x99 equ $ + 2
+	lit_0x0d equ $ + 3
 	dd elf_header ; virtual address
 
-	; Overlap with physical address (u32)
-lit_0x99:
-	db 0x99
-lit_0x0d:
-	db 0x0d
-	nop
-	nop
-
-	dd buffer - elf_header ; file size
-
 stage3:
-	; Exactly 12 bytes. Overlays with
+	; Exactly 20 bytes. Overlaps with:
+	; - physical address (u32): ignored
+	; - file size (u32): <= 0x1000
 	; - size in memory (u32): should just be large enough
 	; - flags (u32): rwx, i.e. & 0x7 == 0x7
 	; - alignment (u32): ignored
 	mov dl, input_prompt_len
 	inc edi
+	db 0x66, 0x05, 0x00, 0x00  ; file size: add ax, 0 (imm16)
+	vpaddb ymm1, ymm4, ymm4
 	syscall
 	vpbroadcastb ymm2, [rbx + lit_0x0d - ebx_base]
 program_header_end:
 
 	; Free code
-	vpaddb ymm1, ymm4, ymm4
-
 	xor eax, eax  ; SYS_read = 0
 	xor edi, edi
 	lea esi, [rbx + buffer - ebx_base]
@@ -99,6 +93,9 @@ loop:
 	pop rax
 	xor edi, edi
 	syscall
+
+	; padding
+	times 4 db 0
 
 input_prompt:
 	db "Enter string to encode:", 0x0a
