@@ -4,19 +4,24 @@
 
 elf_header:
 	db 0x7f, "ELF"
-	db 1  ; class: 32-bit
-	db 1  ; endianness: little
-	db 1  ; version: 1
 
+	; Exactly 16 bytes. Overlaps with:
+	; - class (u8): ignored
+	; - endianness (u8): ignored
+	; - version (u8): ignored
+	; - OS ABI (u8): ignored
+	; - ABI version (u8): ignored
+	; - padding ([u8; 7]): ignored
+	; - type (u16): EXEC, part of mov imm32
+	; - ISA (u16): x86-64, part of mov imm32
+	; - version (u64)
 _start:
-	; Exactly 9 bytes. Overlaps with: OS ABI (u8), ABI version (u8), padding ([u8; 7])
 	mov ebx, ebx_base
+	vpbroadcastb ymm3, [rbx + lit_0xc1 - ebx_base]
+	mov ecx, 0x003e0002  ; imm32: type, ISA
 	inc eax  ; SYS_write = 1
 	jmp stage2
 
-	dw 2  ; type: EXEC
-	dw 0x3e  ; ISA: x86-64
-	dd 1  ; version: 1
 	dd _start  ; entry point
 	dd program_header - elf_header  ; program header table offset
 
@@ -25,8 +30,8 @@ stage2:
 	; - section header table offset (u32): ignored
 	; - flags (u32): ignored
 	; - ELF header size (u16): ignored
-	vpbroadcastb ymm0, [rbx]
-	lea esi, [rbx + input_prompt - ebx_base]
+	vpbroadcastb ymm2, [rbx + lit_0xdf - ebx_base]
+	inc edi
 	jmp stage3
 
 	dw program_header_end - program_header  ; program header entry size
@@ -59,12 +64,11 @@ program_header_end:
 	input_prompt_len equ $ - input_prompt
 
 stage3:
-	inc edi
+	lea esi, [rbx + input_prompt - ebx_base]
 	mov dl, input_prompt_len
 	syscall
 
-	vpbroadcastb ymm2, [rbx + lit_0xdf - ebx_base]
-	vpbroadcastb ymm3, [rbx + lit_0xc1 - ebx_base]
+	vpbroadcastb ymm0, [rbx]
 	vpbroadcastb ymm5, [rbx + lit_0x9a - ebx_base]
 	vpbroadcastb ymm6, [rbx + lit_0x4e - ebx_base]
 	vpsubb ymm7, ymm0
@@ -102,7 +106,7 @@ loop:
 	syscall
 
 	; padding
-	times 4 db 0
+	times 10 db 0
 
 output_prompt:
 	db "Encoded string:", 0x0a
