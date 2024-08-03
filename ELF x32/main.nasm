@@ -14,7 +14,7 @@ elf_header:
 	; - padding ([u8; 7]): ignored
 	; - type (u16): EXEC, part of mov imm32
 	; - ISA (u16): x86-64, part of mov imm32
-	; - version (u64)
+	; - version (u32): ignored
 _start:
 	mov ebx, ebx_base  ; 5 bytes
 	vpbroadcastb ymm2, [rbx + lit_0x0d - ebx_base]  ; 6 bytes
@@ -63,7 +63,6 @@ stage3:
 
 	; Free code
 	vpbroadcastb ymm0, [rbx]  ; 5 bytes
-	lea esi, [rbx + buffer - ebx_base]
 	syscall
 
 	lea edx, [rax + output_prompt_len]
@@ -93,15 +92,11 @@ loop:
 	xor edi, edi
 	syscall
 
-	; padding
-	times 5 db 0
-
-input_prompt:
-	db "Enter string to encode:", 0x0a
-	input_prompt_len equ $ - input_prompt
-
 output_prompt:
 	db "Encoded string:", 0x0a
 	output_prompt_len equ $ - output_prompt
 
 buffer:
+input_prompt:
+	db "Enter string to encode:", 0x0a
+	input_prompt_len equ $ - input_prompt
