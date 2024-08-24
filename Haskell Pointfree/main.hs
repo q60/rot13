@@ -1,31 +1,22 @@
 module Main (main) where
 
-import Control.Monad (join, liftM2)
+import Control.Applicative (liftA3)
+import Data.Bool (bool)
 import Data.Char (chr, isAsciiLower, isAsciiUpper, ord)
 import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
 
 main :: IO ()
 main =
   hSetBuffering stdout NoBuffering
-    >> putStrLn "Enter string to encode: "
+    >> putStr "Enter string to encode: "
     >> getLine
     >>= putStrLn
-      . ("Encoded string:\n" <>)
+      . ("Encoded string: " <>)
       . map
-        ( liftM2
-            (flip (flip . ((!!) .) . flip (:) . pure) . fromEnum)
-            isAsciiLower
-            (chr . (ord 'a' +) . (`mod` 26) . (13 +) . subtract (ord 'a') . ord)
-            <*> join
-              ( liftM2
-                  (flip (flip . ((!!) .) . flip (:) . pure) . fromEnum)
-                  isAsciiUpper
-                  ( chr
-                      . (ord 'A' +)
-                      . (`mod` 26)
-                      . (13 +)
-                      . subtract (ord 'A')
-                      . ord
-                  )
-              )
+        ( ( ( (.)
+                . flip ($ isAsciiLower) 'a'
+            )
+              <*> flip ($ isAsciiUpper) 'A'
+          )
+            (flip (liftA3 bool id . (chr .) . (<*>) ((.) . (+) . ord) ((((`mod` 26) . (13 +)) .) . (. ord) . subtract . ord)))
         )
