@@ -2,7 +2,7 @@ module Main (main) where
 
 import Control.Applicative (liftA3)
 import Data.Bool (bool)
-import Data.Char (chr, isAsciiLower, isAsciiUpper, ord)
+import Data.Char (isAsciiLower, isAsciiUpper, chr, ord)
 import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
 
 main :: IO ()
