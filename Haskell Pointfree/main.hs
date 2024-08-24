@@ -10,13 +10,16 @@ main =
   hSetBuffering stdout NoBuffering
     >> putStr "Enter string to encode: "
     >> getLine
-    >>= putStrLn
-      . ("Encoded string: " <>)
-      . map
-        ( ( ( (.)
-                . flip ($ isAsciiLower) 'a'
-            )
-              <*> flip ($ isAsciiUpper) 'A'
-          )
-            (flip (liftA3 bool id . (chr .) . (<*>) ((.) . (+) . ord) ((((`mod` 26) . (13 +)) .) . (. ord) . subtract . ord)))
+    >>= ( putStrLn
+            . ("Encoded string: " <>)
+            . map
+              ( liftA2
+                  (.)
+                  (flip ($ 'a') isAsciiLower)
+                  (flip ($ 'A') isAsciiUpper)
+                  ( liftA3 bool id
+                      . (chr .)
+                      . (((.) . (+) . ord) <*> ((((`mod` 26) . (+ 13)) .) . (. ord) . subtract . ord))
+                  )
+              )
         )
