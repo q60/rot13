@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>rot13 in html</title>
+    <script src="https://html-lang.org/html.js"></script>
+</head>
+<body>
+    <button onclick="rot13io()">run the program</button>
+
+    <main style="display:none;">
+        <dfn id=rot13>
+            <var title=str></var>
+
+            <cite>str</cite>
+            <bdi></bdi>
+            <i>
+                <s></s>
+                <rt></rt>
+            </i>
+
+            <cite>str</cite>
+            <s>length</s>
+            <address></address>
+            <var title=len></var>
+
+            <cite>len</cite>
+            <bdi></bdi>
+            <i>
+                <s></s>
+                <rt></rt>
+            </i>
+
+            <cite>str</cite>
+            <data value=0></data>
+            <address></address>
+            <var title=head></var>
+
+            <s>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ</s>
+            <var title=map></var>
+
+            <cite>map</cite>
+            <a href=javascript:indexOf() target=_top>
+                <cite>head</cite>
+            </a>
+            <var title=idx></var>
+
+            <cite>idx</cite>
+            <data value=-1></data>
+            <em></em>
+            <bdi></bdi>
+            <i>
+                <cite>map</cite>
+                <cite>idx</cite>
+                <data value=13></data>
+                <dd></dd>
+                <address></address>
+                <var title=head></var>
+            </i>
+
+            <cite>str</cite>
+            <a href=javascript:substr() target=_top>
+                <data value=1></data>
+            </a>
+            <var title=rest></var>
+            <a href=javascript:rot13()>
+                <cite>rest</cite>
+            </a>
+            <var title=rest></var>
+
+            <cite>head</cite>
+            <cite>rest</cite>
+            <dd></dd>
+            <rt></rt>
+        </dfn>
+
+        <dfn id=rot13io>
+            <input placeholder="Enter string to encode:">
+            <var title=inp></var>
+            <a href=javascript:rot13()>
+                <cite>inp</cite>
+            </a>
+            <var title=outp></var>
+
+            <cite>String</cite>
+            <a href=javascript:fromCharCode() target=_top>
+                <data value=10></data>
+            </a>
+            <var title=newl></var>
+
+            <a href=javascript:alert()>
+                <s>Encoded string:</s>
+
+                <cite>newl</cite>
+                <dd></dd>
+                
+                <cite>outp</cite>
+                <dd></dd>
+            </a>
+        </dfn>
+    </main>
+</body>
+</html>
