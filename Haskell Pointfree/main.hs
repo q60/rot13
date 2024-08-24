@@ -7,10 +7,10 @@ import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
 main :: IO ()
 main =
   hSetBuffering stdout NoBuffering
-    >> putStr "Enter string to encode: "
+    >> putStrLn "Enter string to encode: "
     >> getLine
     >>= putStrLn
-      . ("Encoded string: " <>)
+      . ("Encoded string:\n" <>)
       . map
         ( liftM2
             (flip (flip . ((!!) .) . flip (:) . pure) . fromEnum)
