@@ -6,12 +6,12 @@
 //
 
 U0 main() {
-    printf("Enter string to encode: ");
+    Print("Enter string to encode: ");
 
     I32 buffer_len = 256; 
-    I1 buffer[256]; 
+    U1 buffer[256]; 
     I32 len = 0;
-    I1 c;
+    U1 c;
     
     while ((c = GetChar()) != '\n') {
         
