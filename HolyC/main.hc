@@ -6,7 +6,7 @@
 //
 
 U0 main() {
-    Print("Enter string to encode: ");
+    Print("Enter string to encode:\n");
 
     I32 buffer_len = 256; 
     U1 buffer[256]; 
@@ -32,5 +32,6 @@ U0 main() {
     }
     buffer[len] = '\0';
 
-    Print("Encoded string: %s", buffer);
+    Print("Encoded string:\n");
+    Print("%s", buffer);
 }
