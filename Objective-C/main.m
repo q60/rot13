@@ -5,7 +5,7 @@ int main(int argc, const char * argv[])
 {
     // mandatory C-like implementation of encoding method.
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSLog(@"Enter string to encode:\n");
+    NSLog(@"Enter string to encode:");
     size_t sbuff_len = 256;
     char *sbuff = (char *)calloc(sbuff_len, sizeof(char));
 
@@ -38,7 +38,7 @@ int main(int argc, const char * argv[])
 
     // CString -> NextStep String
     NSString *encodedString = [NSString stringWithUTF8String:sbuff];
-    NSLog(@"Encoded string: %@\n", encodedString);
+    NSLog(@"Encoded string:\n%@", encodedString);
 
     free(sbuff);
     [pool drain];
