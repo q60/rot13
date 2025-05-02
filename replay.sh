@@ -6,8 +6,14 @@ TAB=$(printf "\t")
 
 declare -a authors
 declare -A files
-declare -a ignores=(llathasa purplesyringa utk8g)
-declare -a ignorefiles=(.mailmap LICENSE UNLICENSE)
+
+if [[ -z $NO_IGNORE ]]; then
+    declare -a ignores=(llathasa purplesyringa utk8g georgeendo)
+    declare -a ignorefiles=(.mailmap LICENSE UNLICENSE)
+else
+    declare -a ignores
+    declare -a ignorefiles
+fi
 
 while read -r line; do
     case $line in
@@ -31,7 +37,7 @@ while read -r line; do
             fi
             ;;
         *)
-            IFS=$TAB read -r -a command <<<"$line"
+            IFS="$TAB" read -r -a command <<<"$line"
             case ${command[0]} in
                 R*)
                     from="${command[1]}"
@@ -45,7 +51,7 @@ while read -r line; do
                     ;&
                 M)
                     file="${command[1]}"
-                    for author in $authors; do
+                    for author in ${authors[@]}; do
                         case ${files["$file"]} in
                             *$author*)
                                 ;;
@@ -73,8 +79,7 @@ done < <(
         -e 's/^ *//' \
         -e 's/Co-authored-by/Author/i' \
         -e 's/Author: .*(<.*>)/Author: \1/' | \
-    uniq | \
-    sed -z 's/commit [^\n]*\nAuthor: [^\n]*\n\n//g'
+    uniq
 )
 
 for file in "${ignorefiles[@]}"; do
@@ -95,8 +100,8 @@ for file in "${!files[@]}"; do
     toplevel="${toplevel%%/*}"
     toplevels["$toplevel"]=
 
-    IFS=$TAB read -r -a authors <<<"${files["$file"]}"
-    for author in $authors; do
+    IFS="$TAB" read -r -a authors <<<"${files["$file"]}"
+    for author in ${authors[@]}; do
         case ${toplevels["$toplevel"]} in
             *$author*)
                 ;;
@@ -109,12 +114,20 @@ done
 
 for toplevel in "${!toplevels[@]}"; do
     authors="${toplevels[$toplevel]}"
-    if [[ -z "$authors" ]]; then
-        printf '%s\tUnlicense\n' "$toplevel"
+    if [[ -z $SHOW_REMAINING ]]; then
+        display_authors=
     else
-        if [[ -z $SHOW_REMAINING ]]; then
-            authors=
-        fi
-        printf '%s\tGPL-2.0-only%s\n' "$toplevel" "$authors"
+        display_authors="$authors"
     fi
-done | sort
+
+    license=--
+    if [[ -z $NO_IGNORE ]]; then
+        if [[ -z $authors ]]; then
+            license=Unlicense
+        else
+            license=GPL-2.0-only
+        fi
+    fi
+
+    printf '%s\t%s%s\n' "$toplevel" "$license" "$display_authors"
+done | LC_ALL=C sort -s
