@@ -1,0 +1,34 @@
+GET "LIBHDR"
+
+LET READLINE(S) BE $(
+	LET CH = RDCH()
+	LET COUNTER = 0
+	UNTIL COUNTER = 255 | CH = '*N' DO $(
+		COUNTER := COUNTER + 1
+		S % COUNTER := CH
+		CH := RDCH()
+	$)
+	S % 0 := COUNTER
+$)
+
+LET ROT13C(CH) = (
+	(CH >= 'A' & CH <= 'M') | (CH >= 'a' & CH <= 'm') -> CH + 13,
+	(CH >= 'N' & CH <= 'Z') | (CH >= 'n' & CH <= 'z') -> CH - 13,
+	CH
+)
+
+LET ROT13S(S) BE $(
+	FOR N = 1 TO S % 0 DO $(
+		S % N := ROT13C(S % N)
+	$)
+$)
+
+LET START() BE $(
+	LET S = VEC 255
+	WRITES("Enter string to encode:")
+	NEWLINE()
+	READLINE(S)
+	ROT13S(S)
+	WRITEF("Encoded string:*N%S", S)
+	NEWLINE()
+$)

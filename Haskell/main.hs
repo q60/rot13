@@ -10,7 +10,7 @@ sRot13 :: [Char] -> [Char]
 sRot13 (c:str) = (cRot13 c) : sRot13 str
 sRot13 _       = []
 
-main = do 
+main = do
 	putStr "Enter string to encode: "
 	s <- getLine
 	putStr "Encoded string: "

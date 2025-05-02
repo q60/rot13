@@ -1,17 +1,19 @@
 ROT13 Challenge
 ===============
 
-This is a collection of **ROT13** encoding programs written in different languages. *Just for fun*.
+This repository is a collection of **ROT13** encoding programs written in various programming languages, created purely *for fun*.
 
-Feel free to participate - *fork, add, pull request.*
+You're invited to participate! *Fork the repository, contribute your code, and submit a pull request.*
 
-Your program should have **I**/**O** and that's how it's supposed to look (if possible):
+### Contribution Guidelines:
 
+- Your program should include both **input** and **output** functionality, adhering to the following format:
 ```
 Enter string to encode:
 NOWHERE abjurer 123.
 Encoded string:
 ABJURER nowhere 123.
 ```
-
-The file has to be named `main.<lang_extension>` if possible. It must be placed in the `<Language Name>` folder.
+- Name your file `main.<language extension>` whenever possible.
+- Place your file/project within a folder `<language name>`.
+- New contributions must be placed in public domain or `Unlicense`d. Some older ones stay at GPLv2.0-only, see [this file](./Licensing) for license info.
