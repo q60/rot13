@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ROT13</title>
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+
+  <script>
+    const a = "a".charCodeAt(0),
+      z = "z".charCodeAt(0),
+      A = "A".charCodeAt(0),
+      Z = "Z".charCodeAt(0);
+    const rot13 = input => document.getElementById('result').textContent = [...input]
+      .map(c => {
+        let i = c.charCodeAt(0);
+        if (a <= i && i <= z) i = ((i - a + 13) % 26) + a;
+        else if (A <= i && i <= Z) i = ((i - A + 13) % 26) + A;
+        return String.fromCharCode(i);
+      })
+      .join("");
+  </script>
+</head>
+
+<body>
+  <label> Enter string to encode: </label>
+  <input type="text" hx-on:input="rot13(this.value)" /> <br />
+  Encoded string: <span id="result"></span>
+</body>
+
+</html>
