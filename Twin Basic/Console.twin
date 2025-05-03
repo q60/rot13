@@ -1,0 +1,126 @@
+[PredeclaredId]
+Class Console
+    ' This class gives you a start for working with the console.
+    ' Offers simple Cls / WriteLine / ReadLine members
+    
+    Private Type COORD
+        x As Integer
+        y As Integer
+    End Type
+
+    Private Type SMALL_RECT
+        Left As Integer
+        Top As Integer
+        Right As Integer
+        Bottom As Integer
+    End Type
+
+    Private Type INPUT_RECORD
+        iEventType As Integer
+        abData(0 To 15) As Byte
+    End Type
+
+    Private Type CONSOLE_SCREEN_BUFFER_INFO
+        dwSize As COORD
+        dwCursorPosition As COORD
+        wAttributes As Integer
+        srWindow As SMALL_RECT
+        dwMaximumWindowSize As COORD
+    End Type
+    
+    Private Type CHAR_INFO
+        UnicodeChar As Integer
+        Attributes As Integer
+    End Type
+    
+    Private Type CONSOLE_READCONSOLE_CONTROL
+        nLength As Long
+        nInitialChars As Long
+        dwCtrlWakeupMask As Long
+        dwControlKeyState As Long
+    End Type
+    
+    Private DeclareWide PtrSafe Function GetConsoleScreenBufferInfo Lib "kernel32" (ByVal hConsoleOutput As LongPtr, ByRef lpConsoleScreenBufferInfo As CONSOLE_SCREEN_BUFFER_INFO) As Long
+    Private DeclareWide PtrSafe Function ScrollConsoleScreenBufferW Lib "kernel32" (ByVal hConsoleOutput As LongPtr, ByRef lpScrollRectangle As SMALL_RECT, ByVal lpClipRectangle As LongPtr, ByVal dwDestinationOriginXY As Long, ByRef lpFill As CHAR_INFO) As Long
+    Private DeclareWide PtrSafe Function SetConsoleCursorPosition Lib "kernel32" (ByVal hConsoleOutput As LongPtr, ByVal dwCursorPosition As Long) As Long
+    Private DeclareWide PtrSafe Function GetStdHandle Lib "kernel32" (ByVal nStdHandle As Long) As LongPtr
+    Private DeclareWide PtrSafe Function WriteConsoleW Lib "kernel32" (ByVal hConsoleOutput As LongPtr, ByVal lpBuffer As LongPtr, ByVal nNumberOfCharsToWrite As Long, ByRef lpNumberOfCharsWritten As Long, ByVal lpReserved As LongPtr) As Long
+    Private DeclareWide PtrSafe Function ReadConsoleW Lib "kernel32" (ByVal hConsoleInput As LongPtr, ByVal lpBuffer As LongPtr, ByVal nNumberOfCharsToRead As Long, ByRef lpNumberOfCharsRead As Long, ByVal pInputControl As LongPtr) As Long
+    Private DeclareWide PtrSafe Function SysAllocStringLen Lib "OleAut32" (ByVal Value As String, ByVal Length As Long) As String
+
+    Private stdIn As LongPtr
+    Private stdOut As LongPtr
+    Private inputBuffer As String
+
+    Const STD_INPUT_HANDLE As Long = -10
+    Const STD_OUTPUT_HANDLE As Long = -11
+    Const STD_ERROR_HANDLE As Long = -12
+    
+    Sub New(Optional MaxInputLen As Long = 256)
+        stdIn = GetStdHandle(STD_INPUT_HANDLE)
+        stdOut = GetStdHandle(STD_OUTPUT_HANDLE)
+        inputBuffer = String(MaxInputLen, vbNullChar)
+    End Sub
+    
+    Sub Cls()
+        ' see https://learn.microsoft.com/en-us/windows/console/clearing-the-screen
+        Dim csbi As CONSOLE_SCREEN_BUFFER_INFO
+        Dim scrollRect  As SMALL_RECT
+        Dim scrollTarget As COORD
+        Dim fill As CHAR_INFO
+
+        ' Get the number of character cells in the current buffer.
+        If GetConsoleScreenBufferInfo(stdOut, csbi) = 0 Then Exit Sub
+
+        ' Scroll the rectangle of the entire buffer.
+        scrollRect.Left = 0
+        scrollRect.Top = 0
+        scrollRect.Right = csbi.dwSize.x
+        scrollRect.Bottom = csbi.dwSize.y
+
+        ' Scroll it upwards off the top of the buffer With a magnitude of the entire height.
+        scrollTarget.x = 0
+        scrollTarget.y = (0 - csbi.dwSize.y)
+
+        ' Fill With Empty spaces with the buffer's default text attribute.
+        fill.UnicodeChar = AscW(" ")
+        fill.Attributes = csbi.wAttributes
+
+        ' Do the scroll
+        Dim scrollTargetXY As Long = scrollTarget.x Or (CLng(scrollTarget.y) << 16)
+        ScrollConsoleScreenBufferW(stdOut, scrollRect, 0, scrollTargetXY, fill)
+
+        ' Move the cursor to the top left corner too.
+        csbi.dwCursorPosition.x = 0
+        csbi.dwCursorPosition.y = 0
+
+        Dim dwCursorPositionXY As Long = csbi.dwCursorPosition.x Or (CLng(csbi.dwCursorPosition.y) << 16)
+        SetConsoleCursorPosition(stdOut, dwCursorPositionXY)
+    End Sub
+    
+    Sub Write(ByVal Value As String)
+        Dim qWrittenChars As Long
+        WriteConsoleW(stdOut, StrPtr(Value), Len(Value), qWrittenChars, 0)
+        If qWrittenChars <> Len(Value) Then
+            Err.Raise(5, , "failed to write")
+        End If
+    End Sub
+    
+    Sub WriteLine(ByVal Value As String)
+        Dim qWrittenChars As Long
+        Value &= vbCrLf
+        WriteConsoleW(stdOut, StrPtr(Value), Len(Value), qWrittenChars, 0)
+        If qWrittenChars <> Len(Value) Then
+            Err.Raise(5, , "failed to write")
+        End If
+    End Sub
+    
+    Function ReadLine() As String
+        Dim readChars As Long
+        Dim inputControl As CONSOLE_READCONSOLE_CONTROL
+        inputControl.nLength = LenB(inputControl)
+        inputControl.dwCtrlWakeupMask = 1 << Asc(vbLf)
+        ReadConsoleW(stdIn, StrPtr(inputBuffer), Len(inputBuffer), readChars, VarPtr(inputControl))
+        Return Replace(SysAllocStringLen(inputBuffer, readChars - 1), vbCr, "")
+    End Function
+End Class

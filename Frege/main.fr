@@ -1,0 +1,24 @@
+module ROT13 (rot13) where
+
+import Data.Char (isUpper, isLower, ord, chr)
+
+rot13 :: String -> String
+rot13 = map rot13Char
+
+rot13Char :: Char -> Char
+rot13Char c
+    | isUpper c = shift 'A' c 
+    | isLower c = shift 'a' c
+    | otherwise = c
+  where
+    shift base char = chr (ord base + delta)
+      where
+        offset = ord char - ord base
+        delta  = (offset + 13) `mod` 26
+
+main = do
+    query <- "NOWHERE abjurer 123."
+    print "Enter encoding string: "
+    println query
+    print "Encoded string: "
+    println $ rot13 query
