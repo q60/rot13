@@ -1,0 +1,44 @@
+[Description("Rotate 13 module implemented")]
+Module MainModule
+    ' Visual Basic 6 (Twin Basic too) has no .NET types (e.g Char, SByte, NUInt)
+    ' I prefer use "Machine words" for integers
+    ' Syntax rules now looks like Hungarian notation
+    [Description("Entry Point set in project manifest.")]
+    Public Sub Main()
+        Console.Write("Enter string to encode: ")
+        Dim bsEncoded As String = Rot13(Console.ReadLine())
+        
+        Console.Write("Encoded string: " & bsEncoded)
+    End Sub
+    
+    Function Rot13(Source As String) As String
+        Dim nIndex As Long
+        Dim bsResult As String
+        bsResult = ""
+
+        For nIndex = 0 To Len(Source) - 1
+            Dim nCharacter As Integer
+            nCharacter = Asc(Mid(Source, nIndex + 1, 1))
+
+            Select Case nCharacter
+                Case 97 To 109, 65 To 77
+                    bsResult = bsResult & Chr(nCharacter + 13)
+                Case 110 To 122, 78 To 90
+                    bsResult = bsResult & Chr(nCharacter - 13)
+                Case Else
+                    bsResult = bsResult & Chr(nCharacter)
+            End Select
+        Next nIndex
+        Return bsResult
+    End Function
+    
+    ' Don't need
+    Private Sub WriteCollection(ByRef list As Collection)
+        Dim item As Byte
+        Console.Write(Chr(item))
+        ' For Each item In list.Items()
+        '     If item <> 0 Then
+        '     End If
+        ' Next item
+    End Sub
+End Module
