@@ -1,0 +1,27 @@
+COMMENT
+  Project: ROT13
+  Language: ALGOL 68
+  License: Unlicense (Public Domain)
+COMMENT
+
+BEGIN
+  print(("Enter string to encode:", new line));
+  PROC rot13 char = (CHAR c) CHAR:
+    IF c >= "a" AND c <= "z" THEN
+      REPR ( (ABS c - ABS "a" + 13) MOD 26 + ABS "a" )
+    ELIF c >= "A" AND c <= "Z" THEN
+      REPR ( (ABS c - ABS "A" + 13) MOD 26 + ABS "A" )
+    ELSE
+      c
+    FI;
+
+  STRING line;
+  read((line, new line));
+  print(("Encoded string:", new line));
+
+  FOR i FROM LWB line TO UPB line DO
+    print((rot13 char(line[i])))
+  OD;
+
+  print(new line)
+END
